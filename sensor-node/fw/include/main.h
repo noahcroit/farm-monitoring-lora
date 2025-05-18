@@ -15,6 +15,7 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 #include "app_soilmoisture.h"
+#include "app_temphumid.h"
 #include "app_lora.h"
 
 #ifdef __cplusplus
