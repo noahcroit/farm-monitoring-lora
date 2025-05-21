@@ -25,3 +25,4 @@ The task for the LoRa gateway consists of:
 - Pack all data into a JSON format and publish the data to MQTT broker
 - Handle the SIM7600 Dongle for 4G connection.
 - Webcam server by using CSI camera.
+

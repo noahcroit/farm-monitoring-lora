@@ -7,6 +7,8 @@
 TimerScheduler schd;
 // Soil sensor by using ADC
 SoilMoistureSense soil;
+// Air sensor (temp + humid) by using I2C
+TempHumidSense air;
 // LoRa configuration
 app_lora_config_t cfg_lora = {
     .pin_mosi = 23,
@@ -18,7 +20,9 @@ app_lora_config_t cfg_lora = {
     .freq = (long)433E6 // LoRa Frequency
 };
 
-int32_t moisture;
+int32_t moisture=0;
+float temp=0;
+float humid=0;
 
 #if LORA_TX == 1
 void task_soilmeasurement();
@@ -41,7 +45,8 @@ void setup(){
 
     // Initialize soil moisture sensor
     soil.init();
-    debugln("Soil moisture initialize completed.");
+    //air.init();
+    debugln("Sensor initialization completed.");
     
     // Create Tasks
     // and Add task to the scheduller
@@ -89,7 +94,10 @@ void task_soilmeasurement() {
 }
 
 void task_airmeasurement() {
-
+    debug("temp, humid=");
+    debug(temp);
+    debug(",");
+    debugln(humid);
 }
 
 void task_lora_tx() {
