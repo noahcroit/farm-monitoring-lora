@@ -31,6 +31,7 @@ private:
 public:
     //TempHumidSense();
     TempHumidSense();
+    TempHumidSense(uint8_t addr);
     int init();
     void enable();
     void disable();

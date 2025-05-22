@@ -15,6 +15,12 @@ TempHumidSense::TempHumidSense() {
     __addr = 0x44;
 }
 
+TempHumidSense::TempHumidSense(uint8_t addr) {
+    __en_flag = false;
+    Adafruit_SHT31 __dev = Adafruit_SHT31();
+    __addr = addr;
+}
+
 int TempHumidSense::init() {
     enable();
     if(! __dev.begin(__addr)) {
