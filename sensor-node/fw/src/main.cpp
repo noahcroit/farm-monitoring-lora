@@ -17,7 +17,13 @@ app_lora_config_t cfg_lora = {
     .pin_cs = 5,
     .pin_rst = 15,      // LoRa radio reset
     .pin_irq = 2,       // change for your board; must be a hardware interrupt pin
-    .freq = (long)433E6 // LoRa Frequency
+    .freq = (long)433E6, // LoRa Frequency
+    .bw = 125E3, 
+    .sf = 7,
+    .codingDenom = 5,
+    .preambleLen = 8,
+    .syncword = 0x12,
+    .useCRC = false
 };
 
 int32_t moisture=0;
@@ -51,11 +57,11 @@ void setup(){
     // Create Tasks
     // and Add task to the scheduller
 #if LORA_TX == 1
-    PeriodTask t1(3000, &task_soilmeasurement); 
+    PeriodTask t1(1000, &task_soilmeasurement); 
     schd.addTask(t1);
-    PeriodTask t2(5000, &task_airmeasurement); 
+    PeriodTask t2(1000, &task_airmeasurement); 
     schd.addTask(t2);
-    PeriodTask t3(10000, &task_lora_tx); 
+    PeriodTask t3(5000, &task_lora_tx); 
     schd.addTask(t3);
 #endif
 #if LORA_RX == 1
@@ -101,19 +107,20 @@ void task_airmeasurement() {
 }
 
 void task_lora_tx() {
-    char tx_msg[32];
+    char tx_msg[64];
+    int header=0;
     /*
      * Pack the message and send it to the LoRa gateway
      *
      */
-    sprintf(tx_msg, "soil moisture = %d\n", moisture);
+    sprintf(tx_msg, "soilmoisture=%d, temp=%f, humid=%f\n", moisture, temp, humid);
     debug("Sending LoRa message, msg=");
     debugln(tx_msg);
-    app_lora_send_message(tx_msg, false);
+    app_lora_send_message(tx_msg, header);
 }
 
 void task_lora_rx() {
-    char rx_msg[32];
+    char rx_msg[64];
     uint8_t rx_size=0;
 
     /*
