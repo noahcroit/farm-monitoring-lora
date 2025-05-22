@@ -24,6 +24,12 @@ typedef struct
     uint8_t pin_rst;
     uint8_t pin_irq;
     long freq;
+    double bw; 
+    uint8_t sf;
+    uint8_t codingDenom;
+    uint32_t preambleLen;
+    uint8_t syncword;
+    bool useCRC;
 
 }app_lora_config_t;
 
@@ -36,7 +42,7 @@ extern "C" {
  *
  */
 void app_lora_init(app_lora_config_t *cfg);
-void app_lora_send_message(char *msg, bool use_header);
+void app_lora_send_message(char *msg, int header);
 bool app_lora_receive_message(char *msg, uint8_t *size);
 
 #ifdef __cplusplus

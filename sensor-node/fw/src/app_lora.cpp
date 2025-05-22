@@ -24,12 +24,22 @@ void app_lora_init(app_lora_config_t *cfg) {
         debug(".");
         delay(100); 
     }
-    //LoRa.setSyncWord(0xF3);
+    LoRa.setSpreadingFactor(cfg->sf);
+    LoRa.setSignalBandwidth(cfg->bw);
+    LoRa.setCodingRate4(cfg->codingDenom);
+    LoRa.setPreambleLength(cfg->preambleLen);
+    LoRa.setSyncWord(cfg->syncword);
+    if (cfg->useCRC) {
+        LoRa.enableCrc();
+    }
+    else {
+        LoRa.disableCrc();
+    } 
 }
 
-void app_lora_send_message(char *msg, bool use_header) {
+void app_lora_send_message(char *msg, int header) {
     // send packet
-    LoRa.beginPacket(use_header);
+    LoRa.beginPacket(header);
     LoRa.print(msg);
     LoRa.endPacket();
 }
@@ -51,6 +61,7 @@ bool app_lora_receive_message(char *msg, uint8_t *size) {
         *(packet + packetSize) = '\0';
         *size = packetSize + 1;
         memcpy(msg, (const void *)packet, packetSize + 1);
+        free(packet);
         return true;
     }
     return false;
