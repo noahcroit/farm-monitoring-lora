@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <Arduino.h>
 #include <ArduinoJson.h>
+#include <HardwareSerial.h>
 #include "app_soilmoisture.h"
 #include "app_temphumid.h"
 #include "app_lora.h"

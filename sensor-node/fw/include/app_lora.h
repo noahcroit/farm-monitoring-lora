@@ -12,11 +12,14 @@
 #define debugln(x)
 #endif
 
+#define UART_SOF (char)0xAA
+#define UART_EOF (char)0xBB
+
 /* 
  * Struct for RA-01 LoRa module configuration 
  */
-typedef struct
-{
+typedef struct {
+    int node_id;
     uint8_t pin_mosi;
     uint8_t	pin_miso;
     uint8_t	pin_sck;
@@ -44,6 +47,7 @@ extern "C" {
 void app_lora_init(app_lora_config_t *cfg);
 void app_lora_send_message(char *msg, int header);
 bool app_lora_receive_message(char *msg, uint8_t *size);
+void app_lora_pack_message(app_lora_config_t *cfg, char *msg, int moisture, float temp, float humid);
 
 #ifdef __cplusplus
 }

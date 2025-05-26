@@ -1,6 +1,9 @@
 #include <main.h>
 #include <timerScheduler.h>
 
+#define RXD2 16
+#define TXD2 17
+
 
 
 // Task scheduler
@@ -11,6 +14,7 @@ SoilMoistureSense soil;
 TempHumidSense air;
 // LoRa configuration
 app_lora_config_t cfg_lora = {
+    .node_id = (int)NODE_ID, 
     .pin_mosi = 23,
     .pin_miso = 19,
     .pin_sck = 18,
@@ -39,11 +43,14 @@ void task_lora_tx();
 void task_lora_rx();
 #endif
 
+HardwareSerial Serial_LoRa(2);
+
 
 
 void setup(){
     // Initialize UART
     Serial.begin(115200);
+    Serial_LoRa.begin(9600, SERIAL_8N1, RXD2, TXD2);
     
     // Initialize LoRa module
     app_lora_init(&cfg_lora);
@@ -89,6 +96,7 @@ void loop(){
 }
 
 
+
 void task_soilmeasurement() {
     /*
      * Read the soil moisture value from sensor
@@ -113,10 +121,10 @@ void task_lora_tx() {
      * Pack the message and send it to the LoRa gateway
      *
      */
-    sprintf(tx_msg, "soilmoisture=%d, temp=%f, humid=%f\n", moisture, temp, humid);
+    app_lora_pack_message(&cfg_lora, tx_msg, moisture, temp, humid);
+    app_lora_send_message(tx_msg, header);
     debug("Sending LoRa message, msg=");
     debugln(tx_msg);
-    app_lora_send_message(tx_msg, header);
 }
 
 void task_lora_rx() {
@@ -133,5 +141,6 @@ void task_lora_rx() {
         debug(", packet='");
         debug(rx_msg);
         debugln("'");
+        Serial_LoRa.print(rx_msg);
     }
 }

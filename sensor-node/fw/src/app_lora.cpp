@@ -66,3 +66,15 @@ bool app_lora_receive_message(char *msg, uint8_t *size) {
     }
     return false;
 }
+
+void app_lora_pack_message(app_lora_config_t *cfg, char *msg, int moisture, float temp, float humid) {
+    char sof, eof;
+    sof = UART_SOF;
+    eof = UART_EOF;
+    sprintf(msg, "%cid=%d,moisture=%d,temp=%f,humid=%f%c", sof,
+                                                            cfg->node_id,
+                                                            moisture,
+                                                            temp,
+                                                            humid,
+                                                            eof);
+}
