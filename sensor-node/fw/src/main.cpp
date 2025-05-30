@@ -1,8 +1,20 @@
 #include <main.h>
 #include <timerScheduler.h>
+#include "esp_task_wdt.h"
 
 #define RXD2 16
 #define TXD2 17
+
+
+
+//WDT timeout (in seconds)
+#define WDT_TIMEOUT_SEC 10
+#define TASK_PERIOD_MS_SOIL 1000
+#define TASK_PERIOD_MS_AIR  1000
+#define TASK_PERIOD_MS_DISPLAY 1500
+#define TASK_PERIOD_MS_LORA_TX 6100
+#define TASK_PERIOD_MS_LORA_RX 200
+#define TASK_PERIOD_MS_WDT_RESET 5000
 
 
 
@@ -37,11 +49,13 @@ float humid=0;
 #if LORA_TX == 1
 void task_soilmeasurement();
 void task_airmeasurement();
+void task_displayinfo();
 void task_lora_tx();
 #endif
 #if LORA_RX == 1
 void task_lora_rx();
 #endif
+void task_reset_wdt();
 
 HardwareSerial Serial_LoRa(2);
 
@@ -60,21 +74,30 @@ void setup(){
     soil.init();
     //air.init();
     debugln("Sensor initialization completed.");
-    
+   
+    // Initialize Watchdog (WDT)
+    esp_task_wdt_init(WDT_TIMEOUT_SEC, true); //enable panic so ESP32 restarts
+    esp_task_wdt_add(NULL); //add current thread to WDT watch
+
     // Create Tasks
     // and Add task to the scheduller
 #if LORA_TX == 1
-    PeriodTask t1(1000, &task_soilmeasurement); 
+#define TASK_PERIOD_MS_SOIL 1000
+    PeriodTask t1(TASK_PERIOD_MS_SOIL, &task_soilmeasurement); 
     schd.addTask(t1);
-    PeriodTask t2(1000, &task_airmeasurement); 
+    PeriodTask t2(TASK_PERIOD_MS_AIR, &task_airmeasurement); 
     schd.addTask(t2);
-    PeriodTask t3(5000, &task_lora_tx); 
+    PeriodTask t3(TASK_PERIOD_MS_DISPLAY, &task_displayinfo); 
     schd.addTask(t3);
-#endif
-#if LORA_RX == 1
-    PeriodTask t4(200, &task_lora_rx); 
+    PeriodTask t4(TASK_PERIOD_MS_LORA_TX, &task_lora_tx); 
     schd.addTask(t4);
 #endif
+#if LORA_RX == 1
+    PeriodTask t5(TASK_PERIOD_MS_LORA_RX, &task_lora_rx); 
+    schd.addTask(t5);
+#endif
+    PeriodTask t6(TASK_PERIOD_MS_WDT_RESET, &task_reset_wdt); 
+    schd.addTask(t6);
 }
 
 
@@ -103,14 +126,18 @@ void task_soilmeasurement() {
      *
      */
     moisture = soil.getValue();
-    debug("Moisture=");
-    debugln(moisture);
 }
 
 void task_airmeasurement() {
-    debug("temp, humid=");
+    // read SHT31 params
+}
+
+void task_displayinfo() {
+    debug("Moisture=");
+    debug(moisture);
+    debug(",temp=");
     debug(temp);
-    debug(",");
+    debug(",RH=");
     debugln(humid);
 }
 
@@ -143,4 +170,8 @@ void task_lora_rx() {
         debugln("'");
         Serial_LoRa.print(rx_msg);
     }
+}
+
+void task_reset_wdt() {
+    esp_task_wdt_reset();
 }
