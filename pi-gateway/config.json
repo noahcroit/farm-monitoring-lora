@@ -1,0 +1,9 @@
+{
+    "mqtt_broker": "",
+    "mqtt_port": "",
+    "mqtt_topics": [
+        "farm-zone1/info",
+        "farm-zone2/info"
+    ],
+    "keepalive": 60
+}
