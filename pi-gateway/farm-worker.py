@@ -11,6 +11,9 @@ import serial
 
 
 
+# UART properties of LoRa receiver
+UART_SOF = b'\xaa'
+UART_EOF = b'\xbb'
 SERIAL_PORT = '/dev/ttyS0'
 BAUD_RATE = 9600  # Must match the baud rate of the sending device
 
@@ -38,13 +41,29 @@ async def main():
 
 async def task_mqtt():
     global cfg
+    global q2mqtt
     while True:
+        try:
+            if not q2mqtt.empty():
+                #data = q2mqtt.get().decode('utf-8')
+                msg = q2mqtt.get()
+                dev_id, moisture, temp, RH = lora_message_decode(msg)
+                async with aiomqtt.Client(cfg['mqtt_broker'], int(cfg['mqtt_port'])) as client:
+                    await client.publish(str(dev_id) + cfg['mqtt_topics']['moisture'], payload=str(moisture))
+                    await client.publish(str(dev_id) + cfg['mqtt_topics']['temp'], payload=str(temp))
+                    await client.publish(str(dev_id) + cfg['mqtt_topics']['RH'], payload=str(RH))
+        except Exception as e:
+            logger.warning("task: mqtt publish will be stop")
+            logger.error(e)
+            break
         await asyncio.sleep(1)
 
 
 
 
 async def task_serial():
+    global cfg
+    global q2mqtt
     ser = serial.Serial(
         port=SERIAL_PORT,
         baudrate=BAUD_RATE,
@@ -56,24 +75,38 @@ async def task_serial():
     while True:
         # find the SOF first
         data = ser.read()
-        if data == b'\xaa':
+        if data == UART_SOF:
             # go through the message until EOF
             msg = ""
             completed_flag = False
             while not completed_flag:
                 data = ser.read()
-                if data != b'\xbb':
+                if data != UART_EOF:
                     msg = msg + data.decode('utf-8')
                 else:
                     completed_flag = True
+                    q2mqtt.put(msg)
                     print(msg)
         else:
             await asyncio.sleep(1)
 
 
 
+def lora_message_decode(msg):
+    data = msg.split(",")
+    dev_id = int((data[0].split("="))[1])
+    moisture = int((data[1].split("="))[1])
+    temp = float((data[2].split("="))[1])
+    RH = float((data[3].split("="))[1])
+    return dev_id, moisture, temp, RH
+
+
+
 
 if __name__ == '__main__':
+    # Queues
+    q2mqtt = queue.Queue(maxsize=256)
+
     # Initialize parser
     parser = argparse.ArgumentParser()
     # Adding optional argument

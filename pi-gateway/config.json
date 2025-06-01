@@ -1,9 +1,10 @@
 {
-    "mqtt_broker": "",
-    "mqtt_port": "",
-    "mqtt_topics": [
-        "farm-zone1/info",
-        "farm-zone2/info"
-    ],
+    "mqtt_broker": "192.168.1.93",
+    "mqtt_port": "1883",
+    "mqtt_topics": {
+        "moisture" : "/moisture",	
+        "temp" : "/temp",	
+        "RH" : "/RH"	
+    },
     "keepalive": 60
 }
