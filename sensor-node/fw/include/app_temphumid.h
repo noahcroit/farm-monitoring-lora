@@ -29,7 +29,6 @@ private:
     Adafruit_SHT31 __dev;
 
 public:
-    //TempHumidSense();
     TempHumidSense();
     TempHumidSense(uint8_t addr);
     int init();
