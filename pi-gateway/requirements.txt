@@ -1,0 +1,7 @@
+async-timeout==4.0.3
+asyncio==3.4.3
+pyserial==3.5
+aiomqtt==2.3.0
+aioredis==2.0.1
+hiredis==3.1.0
+redis==5.0.1
