@@ -2,13 +2,12 @@
 #include <timerScheduler.h>
 #include "esp_task_wdt.h"
 
-#define RXD2 16
-#define TXD2 17
 
 
 
-//WDT timeout (in seconds)
+// WDT timeout (in seconds)
 #define WDT_TIMEOUT_SEC 10
+// Period of task(s)
 #define TASK_PERIOD_MS_SOIL 1000
 #define TASK_PERIOD_MS_AIR  1000
 #define TASK_PERIOD_MS_DISPLAY 1500
@@ -27,12 +26,12 @@ TempHumidSense air;
 // LoRa configuration
 app_lora_config_t cfg_lora = {
     .node_id = (int)NODE_ID, 
-    .pin_mosi = 23,
-    .pin_miso = 19,
-    .pin_sck = 18,
-    .pin_cs = 5,
-    .pin_rst = 15,      // LoRa radio reset
-    .pin_irq = 2,       // change for your board; must be a hardware interrupt pin
+    .pin_mosi = PIN_LORA_MOSI,
+    .pin_miso = PIN_LORA_MISO,
+    .pin_sck = PIN_LORA_SCK,
+    .pin_cs = PIN_LORA_CS,
+    .pin_rst = PIN_LORA_RST,      // LoRa radio reset
+    .pin_irq = PIN_LORA_IRQ,      // change for your board; must be a hardware interrupt pin
     .freq = (long)433E6, // LoRa Frequency
     .bw = 125E3, 
     .sf = 7,
@@ -64,7 +63,7 @@ HardwareSerial Serial_LoRa(2);
 void setup(){
     // Initialize UART
     Serial.begin(115200);
-    Serial_LoRa.begin(9600, SERIAL_8N1, RXD2, TXD2);
+    Serial_LoRa.begin(9600, SERIAL_8N1, PIN_RXD2, PIN_TXD2);
     
     // Initialize LoRa module
     app_lora_init(&cfg_lora);
