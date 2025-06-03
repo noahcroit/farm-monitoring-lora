@@ -72,7 +72,8 @@ void setup(){
 
     // Initialize soil moisture sensor
     soil.init();
-    //air.init();
+    // Initialize air sensor (SHT31)
+    air.init();
     debugln("Sensor initialization completed.");
    
     // Initialize Watchdog (WDT)
@@ -130,6 +131,8 @@ void task_soilmeasurement() {
 
 void task_airmeasurement() {
     // read SHT31 params
+    temp = air.getTemp();
+    humid = air.getRH();
 }
 
 void task_displayinfo() {
