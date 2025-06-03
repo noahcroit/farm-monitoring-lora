@@ -19,17 +19,6 @@
 #include "app_temphumid.h"
 #include "app_lora.h"
 
-#define PIN_LORA_MOSI 23
-#define PIN_LORA_MISO 19
-#define PIN_LORA_SCK 18
-#define PIN_LORA_CS 5
-#define PIN_LORA_RST 15
-#define PIN_LORA_IRQ 2
-#define PIN_RXD2 16
-#define PIN_TXD2 17
-#define PIN_SHT31_SCL 22
-#define PIN_SHT31_SDA 21
-
 #ifdef __cplusplus
 extern "C" {
 #endif

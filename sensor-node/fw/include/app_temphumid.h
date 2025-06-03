@@ -13,6 +13,9 @@
 #define debugln(x)
 #endif
 
+#define PIN_SHT31_SCL 22
+#define PIN_SHT31_SDA 21
+
 #ifdef __cplusplus
 extern "C" {
 #endif

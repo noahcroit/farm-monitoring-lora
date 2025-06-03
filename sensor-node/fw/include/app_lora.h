@@ -15,6 +15,15 @@
 #define UART_SOF (char)0xAA
 #define UART_EOF (char)0xBB
 
+#define PIN_LORA_MOSI 23
+#define PIN_LORA_MISO 19
+#define PIN_LORA_SCK 18
+#define PIN_LORA_CS 5
+#define PIN_LORA_RST 15
+#define PIN_LORA_IRQ 2
+#define PIN_RXD2 16
+#define PIN_TXD2 17
+
 /* 
  * Struct for RA-01 LoRa module configuration 
  */
