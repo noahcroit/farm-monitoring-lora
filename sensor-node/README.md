@@ -1,13 +1,13 @@
 ## Sensor Nodes
 The sensor node(s) are based on ESP32 microcontroller with LoRa module. The hardware consists of:
-- ESP32 DevKit-C
+- ESP32 DevKit-C <br>
 ![Alt text](../etc/ESP32-DEVKITC-32D.jpg) <br>
 - RA-01 LoRa module (SX1278)
 - Soil Moisture Capacitive Sensor
     https://lastminuteengineers.com/capacitive-soil-moisture-sensor-arduino/
 - SHT31 Temperature & Humidity Sensor
     https://lastminuteengineers.com/sht31-temperature-humidity-sensor-arduino-tutorial/
-- Li-on Battery + BMS
+- Li-on Battery + BMS <br>
 ![Alt text](../etc/hw-components.png) <br>
 
 ## Hardware Diagram of Sensor Node
