@@ -4,7 +4,8 @@
     "mqtt_topics": {
         "moisture" : "/moisture",	
         "temp" : "/temp",	
-        "RH" : "/RH"	
+        "RH" : "/RH",
+	"image64" : "/image64"	
     },
     "keepalive": 60
 }
